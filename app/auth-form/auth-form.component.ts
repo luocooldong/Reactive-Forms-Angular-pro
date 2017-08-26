@@ -1,4 +1,4 @@
-import { Component, Output, ViewChild, AfterViewInit, EventEmitter,
+import { Component, ChangeDetectorRef, Output, ViewChildren, AfterViewInit, EventEmitter,
    ContentChildren, QueryList, AfterContentInit } from '@angular/core';
 
 import { AuthRememberComponent } from './auth-remember.component';
@@ -24,6 +24,9 @@ import { User } from './auth-form.interface';
         <auth-message 
             [style.display]="(showMessage ? 'inherit' : 'none' )" >
         </auth-message>
+        <auth-message 
+            [style.display]="(showMessage ? 'inherit' : 'none' )" >
+        </auth-message>
         <ng-content select="button"></ng-content>
       </form>
     </div>
@@ -33,23 +36,23 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit{
 
   showMessage: boolean;
 
-  @ViewChild(AuthMessageComponent) message: AuthMessageComponent;
+  @ViewChildren(AuthMessageComponent) message: QueryList<AuthMessageComponent>;
 
   @ContentChildren(AuthRememberComponent) remember: QueryList<AuthRememberComponent>;
 
   @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
+
+  constructor(private cd: ChangeDetectorRef){
+  }
 
   
 
   ngAfterContentInit() {
     //Called after ngOnInit when the component's or directive's content has been initialized.
     //Add 'implements AfterContentInit' to the class.
-
-    // console.log(this.remember);
-    if(this.message){
-      this.message.days = 30;
-    }
-    
+    // if(this.message){
+    //   this.message.days = 30;
+    // }
     if(this.remember){
       this.remember.forEach((item) => {
         item.checked.subscribe((checked: boolean) => {
@@ -62,10 +65,20 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit{
   ngAfterViewInit() {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
-    console.log(this.message.days);
-    // this.message.days = 35;
+    // setTimeout(() => {
+    //   if(this.message){
+    //     this.message.forEach((message) => {
+    //       message.days = 30;
+    //     });
+    //   }
+    // });
+    if(this.message){
+      this.message.forEach((message) => {
+        message.days = 30;
+      });
+      this.cd.detectChanges();
+    }
   }
-
 
   onSubmit(value: User) {
     this.submitted.emit(value);
