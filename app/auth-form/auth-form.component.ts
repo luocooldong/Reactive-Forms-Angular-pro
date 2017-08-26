@@ -1,6 +1,8 @@
-import { Component, Output, EventEmitter, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
+import { Component, Output, ViewChild, AfterViewInit, EventEmitter,
+   ContentChildren, QueryList, AfterContentInit } from '@angular/core';
 
 import { AuthRememberComponent } from './auth-remember.component';
+import { AuthMessageComponent } from './auth-message.component';
 
 import { User } from './auth-form.interface';
 
@@ -19,26 +21,35 @@ import { User } from './auth-form.interface';
           <input type="password" name="password" ngModel>
         </label>
         <ng-content select="auth-remember"></ng-content>
-        <div *ngIf="showMessage">
-           You will be logged in 30 day.
-        </div>
+        <auth-message 
+            [style.display]="(showMessage ? 'inherit' : 'none' )" >
+        </auth-message>
         <ng-content select="button"></ng-content>
       </form>
     </div>
   `
 })
-export class AuthFormComponent implements AfterContentInit{
+export class AuthFormComponent implements AfterContentInit, AfterViewInit{
 
   showMessage: boolean;
+
+  @ViewChild(AuthMessageComponent) message: AuthMessageComponent;
 
   @ContentChildren(AuthRememberComponent) remember: QueryList<AuthRememberComponent>;
 
   @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
 
+  
+
   ngAfterContentInit() {
     //Called after ngOnInit when the component's or directive's content has been initialized.
     //Add 'implements AfterContentInit' to the class.
-    console.log(this.remember);
+
+    // console.log(this.remember);
+    if(this.message){
+      this.message.days = 30;
+    }
+    
     if(this.remember){
       this.remember.forEach((item) => {
         item.checked.subscribe((checked: boolean) => {
@@ -46,6 +57,13 @@ export class AuthFormComponent implements AfterContentInit{
           });
       });
     }
+  }
+
+  ngAfterViewInit() {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    console.log(this.message.days);
+    // this.message.days = 35;
   }
 
 
