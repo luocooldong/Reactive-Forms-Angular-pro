@@ -26,6 +26,7 @@ import { User } from './auth-form.interface';
 export class AuthFormComponent {
 
   @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
+  
 
   onSubmit(value: User) {
     this.submitted.emit(value);
