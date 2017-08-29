@@ -1,5 +1,12 @@
-import { combineAll } from 'rxjs/operator/combineAll';
-import { Component, ComponentRef, ViewContainerRef, ViewChild, AfterContentInit, ComponentFactoryResolver } from '@angular/core';
+import {
+    AfterContentInit,
+    Component,
+    ComponentFactoryResolver,
+    ComponentRef,
+    TemplateRef,
+    ViewChild,
+    ViewContainerRef,
+} from '@angular/core';
 
 import { AuthFormComponent } from './auth-form/auth-form.component';
 
@@ -9,9 +16,12 @@ import { User } from './auth-form/auth-form.interface';
   selector: 'app-root',
   template: `
         <div>
-           <button (click)="destroyComponent()" > Destroy </button>
-           <button (click)="moveComponent()" >  Move </button>
+
            <div #entry></div>
+           <template #tmpl>
+             Yudong: England, HK
+           </template>
+
         </div>
   `
 })
@@ -21,6 +31,8 @@ export class AppComponent implements AfterContentInit {
 
       @ViewChild('entry', { read: ViewContainerRef }) entry: ViewContainerRef;
 
+      @ViewChild('tmpl') tmpl: TemplateRef<any>;
+
       constructor(private resolver: ComponentFactoryResolver) {
 
 
@@ -29,11 +41,12 @@ export class AppComponent implements AfterContentInit {
       ngAfterContentInit() {
         //Called after ngOnInit when the component's or directive's content has been initialized.
         //Add 'implements AfterContentInit' to the class.
-        const auhtFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
-        this.entry.createComponent(auhtFormFactory);
+        this.entry.createEmbeddedView(this.tmpl);
 
-        this.component = this.entry.createComponent(auhtFormFactory, 0);
-        console.log(this.component.instance);
+
+        const auhtFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
+
+        this.component = this.entry.createComponent(auhtFormFactory);
 
         this.component.instance.title = 'Create account';
         this.component.instance.submitted.subscribe(this.loginUser);
@@ -44,9 +57,9 @@ export class AppComponent implements AfterContentInit {
         this.component.destroy();
       }
 
-      moveComponent(){
-        this.entry.move(this.component.hostView, 1);
-      }
+      // moveComponent(){
+      //   this.entry.move(this.component.hostView, 1);
+      // }
 
 
       createUser(user: User) {
