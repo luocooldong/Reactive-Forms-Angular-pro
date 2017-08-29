@@ -33,6 +33,7 @@ export class AppComponent implements AfterContentInit {
     console.log(component.instance);
 
     component.instance.title = 'Create account';
+    component.instance.submitted.subscribe(this.loginUser);
   }
 
 
@@ -41,7 +42,7 @@ export class AppComponent implements AfterContentInit {
   }
 
   loginUser(user: User) {
-    console.log('Login', user,);
+    console.log('Login', user);
   }
 
 }
