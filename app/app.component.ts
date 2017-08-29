@@ -18,8 +18,8 @@ import { User } from './auth-form/auth-form.interface';
         <div>
 
            <div #entry></div>
-           <template #tmpl>
-             Yudong: England, HK
+           <template #tmpl let-name let-location="location">
+             {{name}} : {{ location }}
            </template>
 
         </div>
@@ -41,34 +41,10 @@ export class AppComponent implements AfterContentInit {
       ngAfterContentInit() {
         //Called after ngOnInit when the component's or directive's content has been initialized.
         //Add 'implements AfterContentInit' to the class.
-        this.entry.createEmbeddedView(this.tmpl);
-
-
-        const auhtFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
-
-        this.component = this.entry.createComponent(auhtFormFactory);
-
-        this.component.instance.title = 'Create account';
-        this.component.instance.submitted.subscribe(this.loginUser);
-      }
-
-      destroyComponent() {
-        console.log(this.component);
-        this.component.destroy();
-      }
-
-      // moveComponent(){
-      //   this.entry.move(this.component.hostView, 1);
-      // }
-
-
-      createUser(user: User) {
-        console.log('Create account', user);
-
-      }
-
-      loginUser(user: User) {
-        console.log('Login', user);
+        this.entry.createEmbeddedView(this.tmpl, {
+          $implicit: 'Yudong',
+          location: 'UK, England'
+        });
       }
 
 }
