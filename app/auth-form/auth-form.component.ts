@@ -26,91 +26,30 @@ import { User } from './auth-form.interface';
       }
   `],
   template: `
-    <div>
-      <form (ngSubmit)="onSubmit(form.value)" #form="ngForm">
-        <ng-content select="h3"></ng-content>
-        <label>
-          Email address
-          <input type="email" name="email" ngModel #email >
-        </label>
-        <label>
-          Password
-          <input type="password" name="password" ngModel>
-        </label>
-        <ng-content select="auth-remember"></ng-content>
-        <auth-message 
-            [style.display]="(showMessage ? 'inherit' : 'none' )" >
-        </auth-message>
-        <auth-message 
-            [style.display]="(showMessage ? 'inherit' : 'none' )" >
-        </auth-message>
-        <ng-content select="button"></ng-content>
-      </form>
-    </div>
+      <div>
+        <form (ngSubmit)="onSubmit(form.value)" #form="ngForm">
+          <h3>{{ title }}</h3>
+          <label>
+            Email address
+            <input type="email" name="email" ngModel #email>
+          </label>
+          <label>
+            Password
+            <input type="password" name="password" ngModel>
+          </label>
+          <button type="submit">
+            {{ title }}
+          </button>
+        </form>
+      </div>
   `
 })
-export class AuthFormComponent implements AfterContentInit, AfterViewInit{
-
-  showMessage: boolean;
-
-  @ViewChild('email') email: ElementRef;
-
-  @ViewChildren(AuthMessageComponent) message: QueryList<AuthMessageComponent>;
-
-  @ContentChildren(AuthRememberComponent) remember: QueryList<AuthRememberComponent>;
-
-  @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
-
-  constructor(
-    private renderer: Renderer,
-    private cd: ChangeDetectorRef){
-  }
-
+export class AuthFormComponent {
+    title = 'Login';
   
-
-  ngAfterContentInit() {
-    //Called after ngOnInit when the component's or directive's content has been initialized.
-    //Add 'implements AfterContentInit' to the class.
-    // if(this.message){
-    //   this.message.days = 30;
-    // }
-    if(this.remember){
-      this.remember.forEach((item) => {
-        item.checked.subscribe((checked: boolean) => {
-           this.showMessage = checked;
-          });
-      });
+    @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
+  
+    onSubmit(value: User) {
+      this.submitted.emit(value);
     }
-  }
-
-  ngAfterViewInit() {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
-    // setTimeout(() => {
-    //   if(this.message){
-    //     this.message.forEach((message) => {
-    //       message.days = 30;
-    //     });
-    //   }
-    // });
-
-    // this.email.nativeElement.setAttribute('placeholder', 'Enter your email address');
-    // this.email.nativeElement.classList.add('email');
-    // this.email.nativeElement.focus();
-
-    this.renderer.setElementAttribute(this.email.nativeElement, 'placeHolder', 'enter your email address');
-    this.renderer.setElementClass(this.email.nativeElement, 'email', true );
-    this.renderer.invokeElementMethod(this.email.nativeElement, 'focus');
-    if(this.message){
-      this.message.forEach((message) => {
-        message.days = 30;
-      });
-      this.cd.detectChanges();
-    }
-  }
-
-  onSubmit(value: User) {
-    this.submitted.emit(value);
-  }
-
 }

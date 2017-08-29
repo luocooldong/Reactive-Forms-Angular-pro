@@ -1,3 +1,5 @@
+import { Instance } from 'awesome-typescript-loader/dist/instance';
+import { inspect } from 'util';
 import { resolve } from 'path';
 import { privateEncrypt } from 'crypto';
 import { AfterContentInit, Component, ComponentFactoryResolver, ViewChild, ViewContainerRef } from '@angular/core';
@@ -28,9 +30,9 @@ export class AppComponent implements AfterContentInit {
     //Add 'implements AfterContentInit' to the class.
     const auhtFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
     const component = this.entry.createComponent(auhtFormFactory);
+    console.log(component.instance);
 
-
-    
+    component.instance.title = 'Create account';
   }
 
 
