@@ -1,4 +1,5 @@
 import {
+    Renderer,
     AfterContentInit,
     AfterViewInit,
     ChangeDetectorRef,
@@ -60,7 +61,9 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit{
 
   @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
 
-  constructor(private cd: ChangeDetectorRef){
+  constructor(
+    private renderer: Renderer,
+    private cd: ChangeDetectorRef){
   }
 
   
@@ -90,9 +93,14 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit{
     //     });
     //   }
     // });
-    this.email.nativeElement.setAttribute('placeholder', 'Enter your email address');
-    this.email.nativeElement.classList.add('email');
-    this.email.nativeElement.focus();
+
+    // this.email.nativeElement.setAttribute('placeholder', 'Enter your email address');
+    // this.email.nativeElement.classList.add('email');
+    // this.email.nativeElement.focus();
+
+    this.renderer.setElementAttribute(this.email.nativeElement, 'placeHolder', 'enter your email address');
+    this.renderer.setElementClass(this.email.nativeElement, 'email', true );
+    this.renderer.invokeElementMethod(this.email.nativeElement, 'focus');
     if(this.message){
       this.message.forEach((message) => {
         message.days = 30;
