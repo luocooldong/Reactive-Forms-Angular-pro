@@ -1,34 +1,19 @@
-import {
-    AfterContentInit,
-    Component,
-    ComponentFactoryResolver,
-    ComponentRef,
-    TemplateRef,
-    ViewChild,
-    ViewContainerRef,
-} from '@angular/core';
-
-import { AuthFormComponent } from './auth-form/auth-form.component';
-
-import { User } from './auth-form/auth-form.interface';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   template: `
     <div>
-        <ng-container
-          [ngTemplateOutlet]="tmpl"
-          [ngTemplateOutletContext]="ctx">
-        </ng-container>
-        <template #tmpl let-name let-location="location">
-          {{ name }} : {{ location }}
-        </template>
+      <label>
+        Credit Card Number
+        <input 
+          name="credit-card" 
+          type="text"
+          placeholder="Enter your 16-digit card number"
+          credit-card>
+      </label>
     </div>
   `
 })
 export class AppComponent {
-  ctx = {
-    $implicit: 'Todd Motto',
-    location: 'England, UK'
-  };
 }
