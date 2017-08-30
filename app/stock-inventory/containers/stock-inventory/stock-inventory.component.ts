@@ -16,7 +16,8 @@ import { Product } from '../../models/product.interface';
 
         <stock-selector
           [parent]="form"
-          [products]="products">
+          [products]="products"
+          (added)="addStack($event)" >
         </stock-selector>
 
         <stock-products
@@ -68,6 +69,12 @@ export class StockInventoryComponent {
       product_id: new FormControl(parseInt(stock.product_id, 10) || ''),
       quantity: new FormControl(stock.quantity || 10)
     });
+  }
+
+  addStack(stock){
+    const control = this.form.get('stock') as FormArray;
+    console.log(stock);
+    control.push(this.createStock(stock));
   }
 
   onSubmit() {
