@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+
+import { StockValidators } from './stock-inventory.validators';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
@@ -32,7 +34,7 @@ import { Product, Item } from '../../models/product.interface';
         </stock-products>
 
         <div class="stock-inventory__price">
-          Total: {{ total | currency: 'USD': true }}
+          Total: {{ total | currency:'USD':true }}
         </div>
 
         <div class="stock-inventory__buttons">
@@ -59,7 +61,7 @@ export class StockInventoryComponent implements OnInit {
 
   form = this.fb.group({
     store: this.fb.group({
-      branch: ['', Validators.required],
+      branch: ['', [Validators.required, StockValidators.checkBranch]],
       code: ['', Validators.required]
     }),
     selector: this.createStock({}),
@@ -82,32 +84,29 @@ export class StockInventoryComponent implements OnInit {
         const myMap = products
           .map<[number, Product]>(product => [product.id, product]);
         
-        console.log(myMap);
-
         this.productMap = new Map<number, Product>(myMap);
         this.products = products;
         cart.forEach(item => this.addStock(item));
 
         this.calculateTotal(this.form.get('stock').value);
-
         this.form.get('stock')
-           .valueChanges.subscribe(value => this.calculateTotal(value));
+          .valueChanges.subscribe(value => this.calculateTotal(value));
+
       });
 
   }
 
-  calculateTotal(value: Item[]){
+  calculateTotal(value: Item[]) {
     const total = value.reduce((prev, next) => {
       return prev + (next.quantity * this.productMap.get(next.product_id).price);
     }, 0);
     this.total = total;
-
   }
 
   createStock(stock) {
     return this.fb.group({
       product_id: parseInt(stock.product_id, 10) || '',
-      quantity: stock.quantity || 20
+      quantity: stock.quantity || 10
     });
   }
 
