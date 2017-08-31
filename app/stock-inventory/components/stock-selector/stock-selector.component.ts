@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { Product } from '../../models/product.interface';
@@ -17,18 +17,23 @@ import { Product } from '../../models/product.interface';
             {{ product.name }}
           </option>
         </select>
-
         <stock-counter
           [step]="10"
           [min]="10"
           [max]="1000"
           formControlName="quantity">
         </stock-counter>
-
-        <button type="button"
-                (click)="onAdd()" >
+        <button 
+          type="button"
+          [disabled]="stockExists || notSelected"
+          (click)="onAdd()">
           Add stock
         </button>
+        <div
+          class="stock-selector__error"
+          *ngIf="stockExists">
+          Item already exists in the stock
+        </div>
       </div>
     </div>
   `
@@ -43,13 +48,24 @@ export class StockSelectorComponent {
   @Output()
   added = new EventEmitter<any>();
 
-  onAdd(){
-    //  add an item to the array
+  get notSelected() {
+    return (
+      !this.parent.get('selector.product_id').value
+    );
+  }
+
+  get stockExists() {
+    return (
+      this.parent.hasError('stockExists') &&
+      this.parent.get('selector.product_id').dirty
+    );
+  }
+
+  onAdd() {
     this.added.emit(this.parent.get('selector').value);
     this.parent.get('selector').reset({
       product_id: '',
       quantity: 10
     });
-
   }
 }
